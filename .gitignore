@@ -2,6 +2,9 @@
 .gradle
 /local.properties
 /.idea/workspace.xml
+/.idea/vcs.xml
+*.apk
+/app/fabric.properties
 /.idea/libraries
 .DS_Store
 /build
