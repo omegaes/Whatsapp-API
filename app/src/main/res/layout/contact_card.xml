@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="wrap_content"
+              android:padding="12dp"
+              android:layout_margin="4dp"
+              android:background="@color/colorAccent"
+              android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/contact_name_tv"
+        android:text="test"
+        android:textColor="#fff"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:id="@+id/contact_remove_iv"
+        android:src="@drawable/ic_backspace_black_24dp"
+        android:layout_width="26dp"
+        android:layout_height="26dp"/>
+
+</LinearLayout>
