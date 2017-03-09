@@ -21,7 +21,6 @@ import com.mega4tech.whatsappapilibrary.model.WContact;
 import com.mega4tech.whatsappapilibrary.model.WMessage;
 import com.whatsapp.MediaData;
 
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -100,7 +99,7 @@ public class WhatsappApi {
                     db = SQLiteDatabase.openOrCreateDatabase(new File("/data/data/com.whatsapp/databases/msgstore.db"), null);
                     for (WContact contact : contacts) {
                         try {
-                            sendMsg(contact, message);
+                            sendMessage(contact, message);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -125,7 +124,7 @@ public class WhatsappApi {
 
     }
 
-    private void sendMsg(WContact contact, WMessage message) throws IOException {
+    private void sendMessage(WContact contact, WMessage message) throws IOException {
 
         String name = null;
         Calendar c = null;
