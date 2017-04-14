@@ -61,12 +61,16 @@ public class WhatsappApi {
 
         boolean suAvailable = Shell.SU.available();
         if (suAvailable) {
+            Shell.SU.run("am force-stop com.whatsapp");
+            Shell.SU.run("mount -o -R rw,remount /data/data/com.whatsapp");
+            Shell.SU.run("mount -o rw,remount /data/data/com.whatsapp/databases");
             Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases");
+            Shell.SU.run("chmod 777 /data/data/com.whatsapp/files");
+            Shell.SU.run("chmod 777 /data/data/com.whatsapp/shared_prefs");
             Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db");
             Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db-wal");
             Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db-shm");
             Shell.SU.run("ls -l /data/data/com.whatsapp/databases/msgstore.db-shm");
-            Shell.SU.run("mount -o rw,remount /data/data/com.whatsapp/databases");
             isRootAvailable = true;
 
         } else {
