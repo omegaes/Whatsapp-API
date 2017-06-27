@@ -70,6 +70,9 @@ public class WhatsappApi {
             Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db");
             Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db-wal");
             Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db-shm");
+            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/wa.db");
+            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/wa.db-wal");
+            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/wa.db-shm");
             Shell.SU.run("ls -l /data/data/com.whatsapp/databases/msgstore.db-shm");
             isRootAvailable = true;
 
