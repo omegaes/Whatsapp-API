@@ -179,6 +179,7 @@ public class WhatsappApi {
                 name = destination.getName();
                 break;
             case AUDIO:
+                name = message.getFile().getPath();
                 c = Calendar.getInstance();
                 df = new SimpleDateFormat("yyyyMMdd");
                 formattedDate = df.format(c.getTime());
@@ -278,21 +279,24 @@ public class WhatsappApi {
         initialValues.put("media_duration", 0);
 
         if (!TextUtils.isEmpty(file) && !TextUtils.isEmpty(mimeType)) {
-            boolean isVideo = mimeType.contains("video");
-            Bitmap bMap;
+            //boolean isVideo = mimeType.contains("video");
+            Bitmap bMap = null;
             File spec;
-            if (isVideo) {
+            if (mediaType == 3) {
                 spec = new File(vidFolder, file);
                 bMap = ThumbnailUtils.createVideoThumbnail(spec.getAbsolutePath(), MediaStore.Video.Thumbnails.MICRO_KIND);
-            } else {
+            } else if(mediaType == 2) {
+                spec = new File(audFolder, file);
+            }else{
                 spec = new File(imgFolder, file);
                 bMap = BitmapFactory.decodeFile(spec.getAbsolutePath());
             }
-
             long mediaSize = (file.equals("")) ? 0 : spec.length();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bMap = Bitmap.createScaledBitmap(bMap, 100, 59, false);
-            bMap.compress(Bitmap.CompressFormat.JPEG, 60, bos);
+            if(mediaType == 1 || mediaType ==3) {
+                bMap = Bitmap.createScaledBitmap(bMap, 100, 59, false);
+                bMap.compress(Bitmap.CompressFormat.JPEG, 60, bos);
+            }
             byte[] bArray = bos.toByteArray();
 
             MediaData md = new MediaData();
