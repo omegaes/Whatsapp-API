@@ -330,7 +330,8 @@ public class WhatsappApi {
         db.insert("messages_fts_content", null, values);
 
 
-        db.execSQL(query1 + query2);
+        db.execSQL(query1);
+        db.execSQL(query2);
     }
 
     public boolean isRootAvailable() {
