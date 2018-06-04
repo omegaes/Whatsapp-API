@@ -120,7 +120,7 @@ public class WhatsappApi {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public synchronized void readMessages(int limit, long lastSyncId, boolean readMedia, GetMessageListener getMessageListener) {
+    public synchronized void readMessages(final int limit, final long lastSyncId, final boolean readMedia, final GetMessageListener getMessageListener) {
         new AsyncTask<Void, Void, List<WStoredMessage>>() {
 
             Exception ex;
@@ -195,7 +195,7 @@ public class WhatsappApi {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public synchronized void readTableRowCount(String tableName, GetTableCountListener tableCountListener) {
+    public synchronized void readTableRowCount(final String tableName, final GetTableCountListener tableCountListener) {
         new AsyncTask<Void, Void, Integer>() {
 
             Exception ex;
@@ -271,7 +271,7 @@ public class WhatsappApi {
      * @throws WhatsappNotInstalledException
      */
     @SuppressLint("StaticFieldLeak")
-    public synchronized void readSyncMessageCount(long lastSyncId, GetTableCountListener tableCountListener) {
+    public synchronized void readSyncMessageCount(final long lastSyncId, final GetTableCountListener tableCountListener) {
         new AsyncTask<Void, Void, Integer>() {
 
             Exception ex;
@@ -332,7 +332,7 @@ public class WhatsappApi {
      * @param chatListener
      */
     @SuppressLint("StaticFieldLeak")
-    public synchronized void readChats(GetChatListener chatListener) {
+    public synchronized void readChats(final GetChatListener chatListener) {
 
         new AsyncTask<Void, Void, List<WChat>>() {
 
@@ -428,7 +428,7 @@ public class WhatsappApi {
      * @throws WhatsappNotInstalledException
      */
     @SuppressLint("StaticFieldLeak")
-    public synchronized void readPreferences(GetPreferenceListener preferenceListener)  {
+    public synchronized void readPreferences(final GetPreferenceListener preferenceListener)  {
         new AsyncTask<Void, Void, WPreference>() {
 
             Exception ex;
@@ -697,6 +697,7 @@ public class WhatsappApi {
                 name = destination.getName();
                 break;
             case AUDIO:
+                name = message.getFile().getPath();
                 c = Calendar.getInstance();
                 df = new SimpleDateFormat("yyyyMMdd");
                 formattedDate = df.format(c.getTime());
@@ -808,9 +809,9 @@ public class WhatsappApi {
         values.put("c0content", "null  ");
         dbMessage.insert("messages_fts_content", null, values);
 
-
         dbMessage.execSQL(query1);
         dbMessage.execSQL(query2);
+        //TODO: need to copyback to whatsapp folder with copyBackupFolder method - not adding it without testing.
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
