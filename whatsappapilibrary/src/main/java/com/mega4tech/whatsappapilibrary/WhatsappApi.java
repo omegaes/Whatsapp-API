@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.mega4tech.whatsappapilibrary.exception.WhatsappNotInstalledException;
 import com.mega4tech.whatsappapilibrary.liseteners.GetContactsListener;
@@ -46,9 +47,15 @@ public class WhatsappApi {
 
     private static WhatsappApi instance;
     boolean isRootAvailable;
-    private static String imgFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/WhatsApp/Media/WhatsApp Images/Sent";
-    private static String vidFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/WhatsApp/Media/WhatsApp Video/Sent";
-    private static String audFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/WhatsApp/Media/WhatsApp Audio/Sent";
+
+    private static  String whatsAppFolder;
+    private static  String whatsAppHost;
+    private static  String whatsAppName;
+
+    private static String docFolder ;
+    private static String imgFolder ;
+    private static String vidFolder ;
+    private static String audFolder ;
     private SQLiteDatabase db;
 
     public static WhatsappApi getInstance() {
@@ -60,20 +67,22 @@ public class WhatsappApi {
     private WhatsappApi() {
 
         boolean suAvailable = Shell.SU.available();
+        isWhatsappInstalled();
+
         if (suAvailable) {
-            Shell.SU.run("am force-stop com.whatsapp");
-            Shell.SU.run("mount -o -R rw,remount /data/data/com.whatsapp");
-            Shell.SU.run("mount -o rw,remount /data/data/com.whatsapp/databases");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/files");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/shared_prefs");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db-wal");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/msgstore.db-shm");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/wa.db");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/wa.db-wal");
-            Shell.SU.run("chmod 777 /data/data/com.whatsapp/databases/wa.db-shm");
-            Shell.SU.run("ls -l /data/data/com.whatsapp/databases/msgstore.db-shm");
+            Shell.SU.run("am force-stop "+ whatsAppHost);
+            Shell.SU.run("mount -o -R rw,remount " + whatsAppFolder);
+            Shell.SU.run("mount -o rw,remount " + whatsAppFolder + "databases");
+            Shell.SU.run("chmod 777 " + whatsAppFolder + "databases");
+            Shell.SU.run("chmod 777 "  + whatsAppFolder + "files");
+            Shell.SU.run("chmod 777 " + whatsAppFolder + "shared_prefs");
+            Shell.SU.run("chmod 777 " + whatsAppFolder + "databases/msgstore.db");
+            Shell.SU.run("chmod 777 " + whatsAppFolder + "databases/msgstore.db-wal");
+            Shell.SU.run("chmod 777 " + whatsAppFolder + "databases/msgstore.db-shm");
+            Shell.SU.run("chmod 777 " + whatsAppFolder + "databases/wa.db");
+            Shell.SU.run("chmod 777 " + whatsAppFolder + "databases/wa.db-wal");
+            Shell.SU.run("chmod 777 " + whatsAppFolder + "databases/wa.db-shm");
+            Shell.SU.run("ls -l " + whatsAppFolder + "databases/msgstore.db-shm");
             isRootAvailable = true;
 
         } else {
@@ -85,8 +94,29 @@ public class WhatsappApi {
     }
 
     public boolean isWhatsappInstalled() {
-        File file = new File("/data/data/com.whatsapp/");
-        return file.exists();
+        File fileW = new File("/data/data/com.whatsapp/");
+        File fileW4B = new File("/data/data/com.whatsapp.w4b/");
+        boolean isInstalled = false;
+
+        if(fileW.exists()){
+            whatsAppFolder ="/data/data/com.whatsapp/";
+            whatsAppName = "WhatsApp";
+            whatsAppHost = "com.whatsapp";
+            isInstalled = true;
+        }
+        if(fileW4B.exists()){
+            whatsAppFolder ="/data/data/com.whatsapp.w4b/";
+            whatsAppName = "WhatsApp Business";
+            whatsAppHost = "com.whatsapp.w4b";
+            isInstalled = true;
+        }
+
+        imgFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + whatsAppName + "/Media/"+ whatsAppName +" Images/Sent";
+        vidFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + whatsAppName + "/Media/"+ whatsAppName +" Video/Sent";
+        audFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + whatsAppName + "/Media/"+ whatsAppName +" Audio/Sent";
+        docFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + whatsAppName + "/Media/"+ whatsAppName +" Documents/Sent";
+
+        return isInstalled;
     }
 
     public void sendMessage(WContact contact, WMessage message, Context context, SendMessageListener listener) throws IOException, WhatsappNotInstalledException {
@@ -102,8 +132,9 @@ public class WhatsappApi {
             new AsyncTask<Void, Void, Boolean>() {
                 @Override
                 protected Boolean doInBackground(Void... params) {
-                    Shell.SU.run("am force-stop com.whatsapp");
-                    db = SQLiteDatabase.openOrCreateDatabase(new File("/data/data/com.whatsapp/databases/msgstore.db"), null);
+                    Shell.SU.run("am force-stop "+ whatsAppHost);
+                    db = SQLiteDatabase.openOrCreateDatabase(new File(whatsAppFolder +"databases/msgstore.db"), null);
+
                     for (WContact contact : contacts) {
                         try {
                             sendMessage(contact, message);
@@ -113,7 +144,7 @@ public class WhatsappApi {
                     }
                     db.close();
                     PackageManager pm = context.getPackageManager();
-                    Intent intent = pm.getLaunchIntentForPackage("com.whatsapp");
+                    Intent intent = pm.getLaunchIntentForPackage(whatsAppHost);
                     context.startActivity(intent);
                     return true;
                 }
@@ -195,6 +226,23 @@ public class WhatsappApi {
                 }
                 name = destination.getName();
                 break;
+            case DOCUMENT:
+                name = message.getFile().getPath();
+                c = Calendar.getInstance();
+                df = new SimpleDateFormat("yyyyMMdd");
+                formattedDate = df.format(c.getTime());
+                source = new File(name);
+                rand = new Random();
+                destination = new File(docFolder, "DOC-" + formattedDate + "-WA" + (rand.nextInt(100) + rand.nextInt(75) + rand.nextInt(50)) + "." + FilenameUtils.getExtension(message.getFile().getName()));
+                if (source.exists()) {
+                    FileChannel src = new FileInputStream(source).getChannel();
+                    FileChannel dst = new FileOutputStream(destination).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+                name = destination.getName();
+                break;
         }
         sendBigMessage(contact.getId(), message.getText(), name, message.getMime());
     }
@@ -205,8 +253,9 @@ public class WhatsappApi {
             new AsyncTask<Void, Void, List<WContact>>() {
                 @Override
                 protected List<WContact> doInBackground(Void... params) {
-                    Shell.SU.run("am force-stop com.whatsapp");
-                    db = SQLiteDatabase.openOrCreateDatabase(new File("/data/data/com.whatsapp/databases/wa.db"), null);
+                    Shell.SU.run("am force-stop "+ whatsAppHost);
+                    //db = SQLiteDatabase.openOrCreateDatabase(new File(whatsAppFolder + "databases/wa.db"), null);
+                    db = SQLiteDatabase.openDatabase(whatsAppFolder +"databases/wa.db", null,SQLiteDatabase.OPEN_READONLY);
                     List<WContact> contactList = new LinkedList<>();
                     String selectQuery = "SELECT  jid, display_name FROM wa_contacts where phone_type is not null and is_whatsapp_user = 1";
                     Cursor cursor = db.rawQuery(selectQuery, null);
@@ -257,6 +306,7 @@ public class WhatsappApi {
             mediaType = (mimeType.contains("video")) ? 3
                     : (mimeType.contains("image")) ? 1
                     : (mimeType.contains("audio")) ? 2
+                    : (mimeType.contains("pdf")) ? 9
                     : 0;
 
         ContentValues initialValues = new ContentValues();
@@ -287,6 +337,12 @@ public class WhatsappApi {
                 bMap = ThumbnailUtils.createVideoThumbnail(spec.getAbsolutePath(), MediaStore.Video.Thumbnails.MICRO_KIND);
             } else if(mediaType == 2) {
                 spec = new File(audFolder, file);
+            }else if(mediaType == 9) {
+                spec = new File(docFolder, file);
+                msg = spec.getName();
+                bMap = BitmapFactory.decodeFile(spec.getAbsolutePath());
+                initialValues.put("media_mime_type", mimeType);
+                initialValues.put("media_duration", 1);
             }else{
                 spec = new File(imgFolder, file);
                 bMap = BitmapFactory.decodeFile(spec.getAbsolutePath());
