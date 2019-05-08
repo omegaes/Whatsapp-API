@@ -2,6 +2,8 @@
 
 An Android Library with demo application, to send media and text messages via Whatsapp on rooted device
 
+Now support for Whatsapp Business
+
 ## Installation
 
 Add it in your root build.gradle at the end of repositories:
@@ -46,6 +48,13 @@ Send message to one contact or list of contacts, create WMessage and WContact ob
 ```
 WhatsappApi.getInstance().sendMessage(List<WContact>, WMessage, Context, SendMessageListener)  -> void
 ```
+## Mime types supported:
+
+* TEXT
+* IMAGE
+* VIDEO
+* PDF
+
 
 
 ## Contributing

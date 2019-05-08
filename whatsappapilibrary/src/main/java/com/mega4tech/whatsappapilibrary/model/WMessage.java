@@ -12,7 +12,7 @@ import java.io.File;
  */
 
 public class WMessage {
-    public enum MessageType {TEXT, VIDEO, IMAGE, AUDIO}
+    public enum MessageType {TEXT, VIDEO, IMAGE, AUDIO, DOCUMENT}
 
     String text;
     String mime;
@@ -33,7 +33,8 @@ public class WMessage {
                 type = MessageType.AUDIO;
             else if (mime.contains("image"))
                 type = MessageType.IMAGE;
-
+            else if (mime.contains("pdf"))
+                type = MessageType.DOCUMENT;
         } else
             type = MessageType.TEXT;
     }
